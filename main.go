@@ -13,10 +13,10 @@ func main() {
 	totalMovementSCAN := scan(requests, maxDiskBytes)
 
 	// FCFS
-	// totalMovementFCFS := fcfs(requests, maxDiskBytes)
+	totalMovementFCFS := fcfs(requests, maxDiskBytes)
 
 	fmt.Println("Total movement for SCAN:", totalMovementSCAN)
-	// fmt.Println("Total movement for FCFS:", totalMovementFCFS)
+	fmt.Println("Total movement for FCFS:", totalMovementFCFS)
 }
 
 func scan(requests []int, maxDiskBytes int) int {
@@ -58,6 +58,19 @@ func scan(requests []int, maxDiskBytes int) int {
 
 	return totalMovement
 }
+
+func fcfs(requests [] int, _maxDiskBytes int) int {
+	currentPosition := 0
+	totalMovement := 0
+
+	for _, request := range requests {
+		totalMovement += abs(currentPosition - request)
+		currentPosition = request
+	}
+
+	return totalMovement
+}
+
 
 func abs(x int) int {
 	if x < 0 {
