@@ -7,25 +7,26 @@ import (
 )
 
 func main() {
+	initialPosition := 256
 	maxDiskBytes := 512
 	requests := []int{315, 100, 15, 480, 0, 500, 15}
 
 	// SCAN
-	totalMovementSCAN := scan(slices.Clone(requests), maxDiskBytes)
+	totalMovementSCAN := scan(slices.Clone(requests), maxDiskBytes, initialPosition)
 
 	// FCFS
-	totalMovementFCFS := fcfs(slices.Clone(requests), maxDiskBytes)
+	totalMovementFCFS := fcfs(slices.Clone(requests), maxDiskBytes, initialPosition)
 
 	// SSTF
-	totalMovementSSTF := sstf(slices.Clone(requests), maxDiskBytes)
+	totalMovementSSTF := sstf(slices.Clone(requests), maxDiskBytes, initialPosition)
 
 	fmt.Println("Total movement for SCAN:", totalMovementSCAN)
 	fmt.Println("Total movement for FCFS:", totalMovementFCFS)
 	fmt.Println("Total movement for SSTF:", totalMovementSSTF)
 }
 
-func scan(requests []int, maxDiskBytes int) int {
-	currentPosition := 0
+func scan(requests []int, maxDiskBytes int, initialPosition int) int {
+	currentPosition := initialPosition
 	totalMovement := 0
 	slices.Sort(requests)
 
@@ -63,8 +64,8 @@ func scan(requests []int, maxDiskBytes int) int {
 	return totalMovement
 }
 
-func fcfs(requests []int, _maxDiskBytes int) int {
-	currentPosition := 0
+func fcfs(requests []int, _maxDiskBytes int, initialPosition int) int {
+	currentPosition := initialPosition
 	totalMovement := 0
 
 	for _, request := range requests {
@@ -75,9 +76,9 @@ func fcfs(requests []int, _maxDiskBytes int) int {
 	return totalMovement
 }
 
-func sstf(requests []int, _maxDiskBytes int) int {
+func sstf(requests []int, _maxDiskBytes int, initialPosition int) int {
 	totalMovement := 0
-	position := 0
+	currentPosition := initialPosition
 	visited := make([]bool, len(requests))
 
 	for range len(requests) {
@@ -88,7 +89,7 @@ func sstf(requests []int, _maxDiskBytes int) int {
 			if visited[j] {
 				continue
 			}
-			distance := abs(position - requests[j])
+			distance := abs(currentPosition - requests[j])
 			if distance < minDistance {
 				minDistance = distance
 				minDistanceIdx = j
@@ -97,7 +98,7 @@ func sstf(requests []int, _maxDiskBytes int) int {
 		if minDistanceIdx != -1 {
 			totalMovement += minDistance
 			visited[minDistanceIdx] = true
-			position = requests[minDistanceIdx]
+			currentPosition = requests[minDistanceIdx]
 		}
 	}
 	return totalMovement
