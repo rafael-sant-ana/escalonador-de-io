@@ -1,22 +1,26 @@
 package main
 
+import (
+	"io-scheduling/consumers"
+	"io-scheduling/producer"
+)
+
 func main() {
 	initialPosition := 256
 	maxDiskBytes := 512
 
 	requests := make(chan int)
 
-	diskInfo := DiskInfo{
-		initialPosition: initialPosition,
-		maxDiskBytes:    maxDiskBytes,
-	}
+	diskInfo := consumers.NewDiskInfo(
+		initialPosition,
+		maxDiskBytes,
+	)
 
-	go func() {
-		requests <- 100
-	}()
-	FCFSHandler := NewFCFSHandler(diskInfo)
+	FCFSHandler := consumers.NewFCFSHandler(diskInfo)
 
-	FCFSHandler.listenForMessages(requests)
+	producer.ProduceRandomAccessesRequests(requests)
 
-	//FCFSHandler.handle()
+	FCFSHandler.ListenForMessages(requests)
+
+	//FCFSHandler.Handle()
 }
