@@ -1,18 +1,10 @@
 package consumers
 
-type DiskInfo struct {
-	maxDiskBytes    int
-	initialPosition int
-}
-
-func NewDiskInfo(maxDiskBytes int, initialPosition int) DiskInfo {
-	return DiskInfo{
-		maxDiskBytes,
-		initialPosition,
-	}
-}
+import (
+	"io-scheduling/disk"
+)
 
 type IoHandler struct {
-	diskInfo DiskInfo
+	diskInfo disk.DiskInfo
 	requests []int
 }

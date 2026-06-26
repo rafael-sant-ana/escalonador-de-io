@@ -2,6 +2,7 @@ package main
 
 import (
 	"io-scheduling/consumers"
+	"io-scheduling/disk"
 	"io-scheduling/producer"
 )
 
@@ -11,7 +12,7 @@ func main() {
 
 	requests := make(chan int)
 
-	diskInfo := consumers.NewDiskInfo(
+	diskInfo := disk.NewDiskInfo(
 		initialPosition,
 		maxDiskBytes,
 	)

@@ -3,13 +3,14 @@ package consumers
 import (
 	"fmt"
 	"time"
+	"io-scheduling/disk"
 )
 
 type FCFSHandler struct {
 	IoHandler
 }
 
-func NewFCFSHandler(diskInfo DiskInfo) *FCFSHandler {
+func NewFCFSHandler(diskInfo disk.DiskInfo) *FCFSHandler {
 	return &FCFSHandler{
 		IoHandler: IoHandler{
 			diskInfo: diskInfo,
