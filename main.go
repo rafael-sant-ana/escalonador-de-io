@@ -20,7 +20,6 @@ func main() {
 
 	producer.ProduceRandomAccessesRequests(requests, diskInfo)
 
-	FCFSHandler.ListenForMessages(requests)
-
-	//FCFSHandler.Handle()
+	FCFSHandler.ListenForAccesses(requests)
+	FCFSHandler.Handle()
 }

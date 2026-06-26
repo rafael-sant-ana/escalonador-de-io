@@ -5,6 +5,7 @@ import (
 )
 
 type IoHandler struct {
-	diskInfo disk.DiskInfo
-	requests []int
+	diskInfo        disk.DiskInfo
+	requests        []int
+	currentPosition int
 }

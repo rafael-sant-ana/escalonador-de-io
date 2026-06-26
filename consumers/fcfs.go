@@ -1,31 +1,37 @@
 package consumers
 
 import (
+	"errors"
 	"fmt"
-	"time"
 	"io-scheduling/disk"
+	"io-scheduling/utils"
+	"time"
 )
 
 type FCFSHandler struct {
 	IoHandler
+	totalMovement int
 }
 
 func NewFCFSHandler(diskInfo disk.DiskInfo) *FCFSHandler {
 	return &FCFSHandler{
 		IoHandler: IoHandler{
-			diskInfo: diskInfo,
-			requests: []int{},
+			diskInfo:        diskInfo,
+			requests:        []int{},
+			currentPosition: 0,
 		},
+		totalMovement: 0,
 	}
 }
 
-func (h *FCFSHandler) ListenForMessages(requests chan int) {
-	for request := range requests {
+func (h *FCFSHandler) ListenForAccesses(requests chan int) {
+	go func() {
+		for request := range requests {
+			h.log("Got access: ", request)
 
-		fmt.Println("Got Request: ", request)
-
-		h.requests = append(h.requests, request)
-	}
+			h.requests = append(h.requests, request)
+		}
+	}()
 }
 
 func (h *FCFSHandler) Handle() {
