@@ -7,11 +7,10 @@ import (
 )
 
 func main() {
-	initialPosition := 256
-	maxDiskBytes := 512
-
 	requests := make(chan int)
 
+	initialPosition := 256
+	maxDiskBytes := 512
 	diskInfo := disk.NewDiskInfo(
 		initialPosition,
 		maxDiskBytes,
@@ -19,7 +18,7 @@ func main() {
 
 	FCFSHandler := consumers.NewFCFSHandler(diskInfo)
 
-	producer.ProduceRandomAccessesRequests(requests)
+	producer.ProduceRandomAccessesRequests(requests, diskInfo)
 
 	FCFSHandler.ListenForMessages(requests)
 

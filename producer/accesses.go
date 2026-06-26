@@ -1,14 +1,16 @@
 package producer
 
 import (
+	"io-scheduling/disk"
 	"math/rand/v2"
 	"time"
 )
 
-func ProduceRandomAccessesRequests(requests chan int) {
+func ProduceRandomAccessesRequests(requests chan int, diskInfo disk.DiskInfo) {
 	go func() {
 		for {
-			newRequest := rand.IntN(512)
+			maxDiskBytes := diskInfo.GetMaxDiskBytes()
+			newRequest := rand.IntN(maxDiskBytes)
 
 			requests <- newRequest
 
