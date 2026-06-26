@@ -36,14 +36,34 @@ func (h *FCFSHandler) ListenForAccesses(requests chan int) {
 
 func (h *FCFSHandler) Handle() {
 	for {
-		totalMovementFCFS := 0
-		fmt.Println("Total movement for FCFS:", totalMovementFCFS)
+		next, err := h.getNextFCFS()
 
+		if err != nil {
+			continue
+		}
+
+		distance := utils.Abs(next - h.currentPosition)
+
+		h.totalMovement += distance
+		h.currentPosition = next
+
+		h.log("Total movement for FCFS:", h.totalMovement)
 		time.Sleep(3 * time.Second)
 	}
 }
 
-func (h *FCFSHandler) getNextFCFS() int {
+func (h *FCFSHandler) getNextFCFS() (int, error) {
+	if len(h.requests) == 0 {
+		return -1, errors.New("No requests to getNext from")
+	}
+	next := h.requests[0]
 
-	return h.requests[0]
+	h.requests = h.requests[1:]
+
+	return next, nil
+}
+
+func (h *FCFSHandler) log(a ...any) {
+	fmt.Print("[FCFSHandler] ")
+	fmt.Println(a...)
 }
