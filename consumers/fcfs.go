@@ -47,7 +47,7 @@ func (h *FCFSHandler) Handle() {
 		h.totalMovement += distance
 		h.currentPosition = next
 
-		h.log("Total movement for FCFS:", h.totalMovement)
+		h.log("Total movement for FCFS:", h.totalMovement, " | List of future accesses: ", h.IoHandler.requests)
 		time.Sleep(3 * time.Second)
 	}
 }
