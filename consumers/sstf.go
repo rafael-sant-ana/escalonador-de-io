@@ -45,16 +45,32 @@ func (h *SSTFHandler) Handle() {
 		h.totalMovement += distance
 		h.currentPosition = next
 
-		h.log("Total movement for SSTF:", h.totalMovement, " | List of future accesses: ", h.IoHandler.requests)
+		h.log("Total movement for SSTF:", h.totalMovement, " | List of future accesses: ", h.requests)
 		time.Sleep(3 * time.Second)
 	}
 }
 
 func (h *SSTFHandler) getNextSSTF() (int, error) {
-	if len(h.IoHandler.requests) == 0 {
+	if len(h.requests) == 0 {
 		return -1, errors.New("No requests to getNext from")
 	}
-	next := h.IoHandler.requests[0]
+
+	bestIdx := 0
+	bestDistance := utils.Abs(h.currentPosition - h.requests[0])
+
+	for idx, position := range h.requests {
+		distance := utils.Abs(h.currentPosition - position)
+
+		if distance < bestDistance {
+			bestDistance = distance
+			bestIdx = idx
+		}
+	}
+
+	next := h.requests[bestIdx]
+
+	h.requests = append(h.requests[:bestIdx], h.requests[bestIdx+1:]...) // pega a lista e desempacota porque espera append([]type, type, type, ...) = append([]type, ...type)
+
 	return next, nil
 }
 

@@ -28,4 +28,5 @@ func main() {
 	go SSTFHandler.Handle()
 
 	select {} // Deixa a main aberta pra smp
+	// porque: o select eh usado para esperar eventos de goroutines. como nao temos casos, estamos esperando pra smp.
 }
