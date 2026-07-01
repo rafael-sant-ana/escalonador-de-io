@@ -27,8 +27,6 @@ func NewFCFSHandler(diskInfo disk.DiskInfo) *FCFSHandler {
 func (h *FCFSHandler) ListenForAccesses(requests chan int) {
 	go func() {
 		for request := range requests {
-			h.log("Got access: ", request)
-
 			h.requests = append(h.requests, request)
 		}
 	}()

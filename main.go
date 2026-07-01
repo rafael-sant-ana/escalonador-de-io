@@ -27,5 +27,5 @@ func main() {
 	go FCFSHandler.Handle()
 	go SSTFHandler.Handle()
 
-	select {}
+	select {} // Deixa a main aberta pra smp
 }

@@ -27,7 +27,6 @@ func NewSSTFHandler(diskInfo disk.DiskInfo) *SSTFHandler {
 func (h *SSTFHandler) ListenForAccesses(requests chan int) {
 	go func() {
 		for request := range requests {
-			h.log("Got access: ", request)
 			h.requests = append(h.requests, request)
 		}
 	}()
