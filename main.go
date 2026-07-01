@@ -17,9 +17,10 @@ func main() {
 	)
 
 	FCFSHandler := consumers.NewFCFSHandler(diskInfo)
+	multiplexer := consumers.NewMultiplexerHandler(FCFSHandler)
 
 	producer.ProduceRandomAccessesRequests(requests, diskInfo)
 
-	FCFSHandler.ListenForAccesses(requests)
+	multiplexer.ListenForAccesses(requests)
 	FCFSHandler.Handle()
 }
