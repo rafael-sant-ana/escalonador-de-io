@@ -23,5 +23,9 @@ func main() {
 	producer.ProduceRandomAccessesRequests(requests, diskInfo)
 
 	multiplexer.ListenForAccesses(requests)
-	SSTFHandler.Handle()
+
+	go FCFSHandler.Handle()
+	go SSTFHandler.Handle()
+
+	select {}
 }
