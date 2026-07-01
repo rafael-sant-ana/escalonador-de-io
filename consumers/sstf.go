@@ -1,6 +1,7 @@
 package consumers
 
 import (
+	"errors"
 	"fmt"
 	"io-scheduling/disk"
 	"io-scheduling/utils"
@@ -33,27 +34,29 @@ func (h *SSTFHandler) ListenForAccesses(requests chan int) {
 }
 
 func (h *SSTFHandler) Handle() {
-	go func() {
-		for {
-			next, err := h.getNextSSTF()
+	for {
+		next, err := h.getNextSSTF()
 
-			if err != nil {
-				continue
-			}
-
-			distance := utils.Abs(next - h.currentPosition)
-
-			h.totalMovement += distance
-			h.currentPosition = next
-
-			h.log("Total movement for SSTF:", h.totalMovement, " | List of future accesses: ", h.IoHandler.requests)
-			time.Sleep(3 * time.Second)
+		if err != nil {
+			continue
 		}
-	}()
+
+		distance := utils.Abs(next - h.currentPosition)
+
+		h.totalMovement += distance
+		h.currentPosition = next
+
+		h.log("Total movement for SSTF:", h.totalMovement, " | List of future accesses: ", h.IoHandler.requests)
+		time.Sleep(3 * time.Second)
+	}
 }
 
 func (h *SSTFHandler) getNextSSTF() (int, error) {
-	return h.IoHandler.requests[0], nil
+	if len(h.IoHandler.requests) == 0 {
+		return -1, errors.New("No requests to getNext from")
+	}
+	next := h.IoHandler.requests[0]
+	return next, nil
 }
 
 func (h *SSTFHandler) log(a ...any) {

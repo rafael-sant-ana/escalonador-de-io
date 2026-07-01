@@ -14,11 +14,14 @@ func NewMultiplexerHandler(FCFSHandler *FCFSHandler, SSTFHandler *SSTFHandler) *
 
 func (h *MultiplexerHandler) ListenForAccesses(requests chan int) {
 	requestsFCFS := make(chan int)
+	requestsSSTF := make(chan int)
 
+	h.sstf.ListenForAccesses(requestsSSTF)
 	h.fcfs.ListenForAccesses(requestsFCFS)
 	go func() {
 		for request := range requests {
 			requestsFCFS <- request
+			requestsSSTF <- request
 		}
 	}()
 }
