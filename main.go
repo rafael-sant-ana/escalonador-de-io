@@ -17,10 +17,11 @@ func main() {
 	)
 
 	FCFSHandler := consumers.NewFCFSHandler(diskInfo)
-	multiplexer := consumers.NewMultiplexerHandler(FCFSHandler)
+	SSTFHandler := consumers.NewSSTFHandler(diskInfo)
+	multiplexer := consumers.NewMultiplexerHandler(FCFSHandler, SSTFHandler)
 
 	producer.ProduceRandomAccessesRequests(requests, diskInfo)
 
 	multiplexer.ListenForAccesses(requests)
-	FCFSHandler.Handle()
+	SSTFHandler.Handle()
 }

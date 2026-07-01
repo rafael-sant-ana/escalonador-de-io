@@ -2,11 +2,13 @@ package consumers
 
 type MultiplexerHandler struct {
 	fcfs *FCFSHandler
+	sstf *SSTFHandler
 }
 
-func NewMultiplexerHandler(FCFSHandler *FCFSHandler) *MultiplexerHandler {
+func NewMultiplexerHandler(FCFSHandler *FCFSHandler, SSTFHandler *SSTFHandler) *MultiplexerHandler {
 	return &MultiplexerHandler{
 		fcfs: FCFSHandler,
+		sstf: SSTFHandler,
 	}
 }
 
