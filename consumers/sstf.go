@@ -45,7 +45,7 @@ func (h *SSTFHandler) Handle() {
 		h.totalMovement += distance
 		h.currentPosition = next
 
-		h.log("Total movement for SSTF:", h.totalMovement, " | List of future accesses: ", h.requests)
+		h.logStatus()
 		time.Sleep(3 * time.Second)
 	}
 }
@@ -72,6 +72,10 @@ func (h *SSTFHandler) getNextSSTF() (int, error) {
 	h.requests = append(h.requests[:bestIdx], h.requests[bestIdx+1:]...) // pega a lista e desempacota porque espera append([]type, type, type, ...) = append([]type, ...type)
 
 	return next, nil
+}
+
+func (h *SSTFHandler) logStatus() {
+	h.log("Total movement for SSTF:", h.totalMovement, " | Current position", h.currentPosition, " | List of future accesses: ", h.requests)
 }
 
 func (h *SSTFHandler) log(a ...any) {

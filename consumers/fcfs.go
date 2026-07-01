@@ -45,7 +45,7 @@ func (h *FCFSHandler) Handle() {
 		h.totalMovement += distance
 		h.currentPosition = next
 
-		h.log("Total movement for FCFS:", h.totalMovement, " | List of future accesses: ", h.IoHandler.requests)
+		h.logStatus()
 		time.Sleep(3 * time.Second)
 	}
 }
@@ -59,6 +59,10 @@ func (h *FCFSHandler) getNextFCFS() (int, error) {
 	h.requests = h.requests[1:]
 
 	return next, nil
+}
+
+func (h *FCFSHandler) logStatus() {
+	h.log("Total movement for FCFS:", h.totalMovement, " | Current position", h.currentPosition, " | List of future accesses: ", h.requests)
 }
 
 func (h *FCFSHandler) log(a ...any) {

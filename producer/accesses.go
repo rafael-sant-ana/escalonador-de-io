@@ -9,8 +9,13 @@ import (
 
 func ProduceRandomAccessesRequests(requests chan int, diskInfo disk.DiskInfo) {
 	go func() {
+		maxDiskBytes := diskInfo.GetMaxDiskBytes()
+		for range 9 { // quero criar 9 requests "estaticas"
+			newRequest := rand.IntN(maxDiskBytes)
+			requests <- newRequest
+		}
+		// porque quero que os algoritmos funcionem com 10 requests na pool, no minimo
 		for {
-			maxDiskBytes := diskInfo.GetMaxDiskBytes()
 			newRequest := rand.IntN(maxDiskBytes)
 
 			producerLog(newRequest)
