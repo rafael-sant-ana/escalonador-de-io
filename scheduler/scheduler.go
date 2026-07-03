@@ -1,8 +1,9 @@
-package consumers
+package scheduler
 
 import (
 	"fmt"
 	"io-scheduling/disk"
+	"io-scheduling/scheduler/strategies"
 	"io-scheduling/utils"
 	"time"
 )
@@ -12,20 +13,19 @@ type Scheduler struct {
 	requests        []int
 	currentPosition int
 
-	ss            SchedulerStrategy
+	ss            strategies.SchedulerStrategy
 	totalMovement int
 }
 
 func NewScheduler(
 	diskInfo disk.DiskInfo,
-	requests []int,
-	currentPosition int,
-	ss SchedulerStrategy,
+	initialPosition int,
+	ss strategies.SchedulerStrategy,
 ) *Scheduler {
 	return &Scheduler{
 		diskInfo:        diskInfo,
-		requests:        requests,
-		currentPosition: currentPosition,
+		requests:        []int{},
+		currentPosition: initialPosition,
 
 		ss:            ss,
 		totalMovement: 0,
@@ -40,7 +40,9 @@ func (s *Scheduler) ListenForAccesses(requests chan int) {
 
 func (s *Scheduler) Handle() {
 	for {
-		next, err := s.ss.getNext()
+		next, requests, err := s.ss.GetNext(s.requests, s.currentPosition)
+
+		s.requests = requests
 
 		if err != nil {
 			continue // Isso causa gasto inutil de CPU

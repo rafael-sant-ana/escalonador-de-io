@@ -1,9 +1,10 @@
 package main
 
 import (
-	"io-scheduling/consumers"
 	"io-scheduling/disk"
 	"io-scheduling/producer"
+	"io-scheduling/scheduler"
+	"io-scheduling/scheduler/strategies"
 )
 
 func main() {
@@ -16,16 +17,34 @@ func main() {
 		maxDiskBytes,
 	)
 
-	FCFSHandler := consumers.NewFCFSHandler(diskInfo)
-	SSTFHandler := consumers.NewSSTFHandler(diskInfo)
-	multiplexer := consumers.NewMultiplexerHandler(FCFSHandler, SSTFHandler)
+	FCFSStrategy := strategies.NewFCFSStrategy()
+	SSTFStrategy := strategies.NewSSTFStrategy()
+
+	FCFSScheduler := scheduler.NewScheduler(
+		diskInfo,
+		initialPosition,
+		FCFSStrategy,
+	)
+
+	SSTFScheduler := scheduler.NewScheduler(
+		diskInfo,
+		initialPosition,
+		SSTFStrategy,
+	)
+
+	schedulers := []*scheduler.Scheduler{
+		FCFSScheduler,
+		SSTFScheduler,
+	}
+
+	multiplexer := scheduler.NewMultiplexerHandler(schedulers)
 
 	producer.ProduceRandomAccessesRequests(requests, diskInfo)
 
-	multiplexer.ListenForAccesses(requests)
+	go multiplexer.ListenForAccesses(requests)
 
-	go FCFSHandler.Handle()
-	go SSTFHandler.Handle()
+	go FCFSScheduler.Handle()
+	go SSTFScheduler.Handle()
 
 	select {} // Deixa a main aberta pra smp
 	// porque: o select eh usado para esperar eventos de goroutines. como nao temos casos, estamos esperando pra smp.
