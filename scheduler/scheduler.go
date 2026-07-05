@@ -5,6 +5,7 @@ import (
 	"io-scheduling/disk"
 	"io-scheduling/scheduler/strategies"
 	"io-scheduling/utils"
+	"sync"
 	"time"
 )
 
@@ -15,6 +16,8 @@ type Scheduler struct {
 
 	ss            strategies.SchedulerStrategy
 	totalMovement int
+
+	mu sync.Mutex
 }
 
 func NewScheduler(
@@ -34,17 +37,23 @@ func NewScheduler(
 
 func (s *Scheduler) ListenForAccesses(requests chan int) {
 	for request := range requests {
+		s.mu.Lock()
 		s.requests = append(s.requests, request)
+		s.mu.Unlock()
 	}
 }
 
 func (s *Scheduler) Handle() {
+	fmt.Println("Activated handler for ", s.ss.Name())
 	for {
+		s.mu.Lock()
 		next, requests, err := s.ss.GetNext(s.requests, s.currentPosition)
 
 		s.requests = requests
+		s.mu.Unlock()
 
 		if err != nil {
+			time.Sleep(100 * time.Millisecond)
 			continue // Isso causa gasto inutil de CPU
 		}
 
@@ -59,8 +68,8 @@ func (s *Scheduler) Handle() {
 }
 
 func (s *Scheduler) logStatus() {
-	fmt.Println(
-		"[%s] Total Movement: %d | Current Position: %d | Requests List: %v",
+	fmt.Printf(
+		"[%s] Total Movement: %d | Current Position: %d | Requests List: %v \n",
 		s.ss.Name(),
 		s.totalMovement,
 		s.currentPosition,

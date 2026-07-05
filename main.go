@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	requests := make(chan int)
+	requestsChannel := make(chan int)
 
 	initialPosition := 256
 	maxDiskBytes := 512
@@ -39,12 +39,10 @@ func main() {
 
 	multiplexer := scheduler.NewMultiplexerHandler(schedulers)
 
-	producer.ProduceRandomAccessesRequests(requests, diskInfo)
+	producer.ProduceRandomAccessesRequests(requestsChannel, diskInfo)
 
-	go multiplexer.ListenForAccesses(requests)
-
-	go FCFSScheduler.Handle()
-	go SSTFScheduler.Handle()
+	go multiplexer.ListenForAccesses(requestsChannel)
+	multiplexer.ActivateHandlers()
 
 	select {} // Deixa a main aberta pra smp
 	// porque: o select eh usado para esperar eventos de goroutines. como nao temos casos, estamos esperando pra smp.
